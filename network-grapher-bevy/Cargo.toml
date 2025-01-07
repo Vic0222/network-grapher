@@ -1,0 +1,16 @@
+[package]
+name = "network-grapher-bevy"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = "0.15.0"
+bevy-inspector-egui = "0.28.1"
+bevy_prototype_lyon = "0.13.0"
+petgraph = "0.7.0"
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
