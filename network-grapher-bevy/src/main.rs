@@ -62,7 +62,6 @@ fn draw_nodes(mut commands:  Commands, graph_resource: Res<GraphResource>) {
 
 fn draw_node( commands: &mut  Commands<'_, '_>, i: f32, spacing: f32, node: &petgraph::graph::Node<Node>) {
     let entity: Entity = commands.spawn_empty().id();
-    println!("count {} ", i);
     let color = Color::hsl(360. * i as f32 / 3 as f32, 0.95, 0.7);
     let y = if i % 2.0 == 0.0 { 1.0 } else { 0.0 };
     commands.entity(entity).insert((Sprite {
@@ -83,14 +82,14 @@ fn draw_edges(mut commands: Commands,
         let source_node = query.iter().find(|(n, _) |{
             match graph_resource.0.node_weight(edge.source()) {
                 Some(n2) => n.id == n2.id,
-                None => false,
+                _ => false,
             }
         });
 
         let target_node = query.iter().find(|(n, _) |{
             match graph_resource.0.node_weight(edge.target()) {
                 Some(n2) => n.id == n2.id,
-                None => false,
+                _ => false,
             }
         });
         if source_node.is_some() && target_node.is_some() {
