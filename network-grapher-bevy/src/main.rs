@@ -1,6 +1,5 @@
 use bevy::{color::palettes::css::*, prelude::*, utils::HashSet};
 use bevy_prototype_lyon::prelude::*;
-use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use petgraph::{ csr::DefaultIx, graph::NodeIndex, Graph};
 
 
@@ -9,7 +8,6 @@ fn main() {
     let mut binding = App::new();
     let app = binding
         .add_plugins((DefaultPlugins,ShapePlugin))
-        .add_plugins(WorldInspectorPlugin::new())
         .add_systems(Startup, (setup, setup_graph, draw_nodes, draw_edges).chain());
 
         app.run();
@@ -96,7 +94,6 @@ fn draw_edges(mut commands: Commands,
             }
         });
         if source_node.is_some() && target_node.is_some() {
-            println!("Arrrrrrrrrrr");
             draw_arrow(&mut commands, arrow, source_node.unwrap().1, target_node.unwrap().1);
         }
         
@@ -130,7 +127,7 @@ fn draw_arrow(commands: &mut Commands<'_, '_>, arrow: Entity, source_node: &Tran
     path_builder.close();
     let path = path_builder.build();
 
-
+    transform.translation.z = 1.0;
     commands.entity(arrow).insert((
         ShapeBundle {
             path,
