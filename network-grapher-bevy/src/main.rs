@@ -1,9 +1,12 @@
 mod components;
+mod models;
 
-use bevy::{color::palettes::css::*, input::mouse::{MouseButtonInput, MouseMotion}, prelude::*, utils::HashSet};
+use bevy::{color::palettes::css::*, input::mouse::{MouseButtonInput, MouseMotion}, prelude::*};
 use bevy_prototype_lyon::prelude::*;
+use petgraph:: Graph;
+
 use components::MouseRightButtonPressed;
-use petgraph::{ csr::DefaultIx, graph::NodeIndex, Graph};
+use models::Node;
 
 fn main() {
     
@@ -22,11 +25,6 @@ fn setup(mut commands: Commands) {
     commands.insert_resource(MouseRightButtonPressed(false));
 }
 
-#[derive(Component, Default, Clone, Copy, Debug)]
-pub struct Node {
-    pub id: i32
-}
-
 const SIZE: f32 = 100.0;
 const ARROW_THICKNESS: f32 = 3.0;
 const CAM_LERP_FACTOR: f32 = 1.;
@@ -34,9 +32,9 @@ const CAM_LERP_FACTOR: f32 = 1.;
 #[derive(Resource, Deref)]
 pub struct GraphResource(pub Graph<Node, i32>);
 fn setup_graph(mut commands: Commands) {
-    let node1 = Node { id: 1};
-    let node2 = Node { id: 2};
-    let node3 = Node { id: 3};
+    let node1 = Node { id: 1, label: "Father".to_string(), image_url: Some( "https://placehold.co/100".to_string()) };
+    let node2 = Node { id: 2, label: "Mother".to_string(), image_url: Some( "https://placehold.co/100".to_string()) };
+    let node3 = Node { id: 3, label: "Child".to_string(), image_url: Some( "https://placehold.co/100".to_string()) };
     let mut graph = Graph::<Node, i32>::new();
     
     let a = graph.add_node(node1);
@@ -114,12 +112,18 @@ fn draw_node( commands: &mut  Commands<'_, '_>, i: f32, spacing: f32, node: &pet
     let entity: Entity = commands.spawn_empty().id();
     let color = Color::hsl(360. * i as f32 / 3 as f32, 0.95, 0.7);
     let y = if i % 2.0 == 0.0 { 1.0 } else { 0.0 };
-    commands.entity(entity).insert((Sprite {
+    commands.entity(entity)
+    .insert((Sprite {
         color: color,
         custom_size: Some(Vec2::new(SIZE, SIZE)),
         ..default()
-    }, Transform::from_xyz((spacing + SIZE )* i, (spacing + SIZE )* y, 0.0),
-    node.weight.clone()));
+        }, Transform::from_xyz((spacing + SIZE )* i, (spacing + SIZE )* y, 0.0),
+        node.weight.clone()
+    ))
+    .with_child((
+        Text2d::new(node.weight.label.to_string()),
+        Transform::from_xyz(0.0, -70.0 , 0.0)
+    ));
 }
 
 fn draw_edges(mut commands: Commands,

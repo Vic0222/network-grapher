@@ -1,4 +1,5 @@
-use bevy::{math::Vec2, prelude::{Component, Deref, Resource}};
+use bevy::prelude::*;
+
 
 #[derive(Resource)]
 pub struct MouseRightButtonPressed(pub bool);
