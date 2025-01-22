@@ -5,5 +5,5 @@ use bevy::prelude::Component;
 pub struct Node {
     pub id: i32,
     pub label: String,
-    pub image_url: Option<String>,
+    pub image_src: Option<String>,
 }

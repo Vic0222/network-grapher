@@ -32,9 +32,9 @@ const CAM_LERP_FACTOR: f32 = 1.;
 #[derive(Resource, Deref)]
 pub struct GraphResource(pub Graph<Node, i32>);
 fn setup_graph(mut commands: Commands) {
-    let node1 = Node { id: 1, label: "Father".to_string(), image_url: Some( "https://placehold.co/100".to_string()) };
-    let node2 = Node { id: 2, label: "Mother".to_string(), image_url: Some( "https://placehold.co/100".to_string()) };
-    let node3 = Node { id: 3, label: "Child".to_string(), image_url: Some( "https://placehold.co/100".to_string()) };
+    let node1 = Node { id: 1, label: "Father".to_string(), image_src: Some( "100.png".to_string()) };
+    let node2 = Node { id: 2, label: "Mother".to_string(), image_src: Some( "100.png".to_string()) };
+    let node3 = Node { id: 3, label: "Child".to_string(), image_src: Some( "100.png".to_string()) };
     let mut graph = Graph::<Node, i32>::new();
     
     let a = graph.add_node(node1);
@@ -96,31 +96,48 @@ fn handle_camera_move_using_mouse(
        // println!("Box X: {} , Y: {}, Z: {}", camera.translation.x, camera.translation.y, camera.translation.z);
 }
 
-fn draw_nodes(mut commands:  Commands, graph_resource: Res<GraphResource>) {
+fn draw_nodes(mut commands:  Commands, graph_resource: Res<GraphResource>, asset_server: Res<AssetServer>) {
     let mut i = 0.0;
     let spacing = 100.0;
 
     //draw_node(&mut commands, i, spacing, node1);
     graph_resource.0.raw_nodes().iter().for_each(|node| {
-        draw_node(&mut commands, i, spacing, node);
+        draw_node(&mut commands, &asset_server, i, spacing, node);
         i += 1.0;
     });
     
 }
 
-fn draw_node( commands: &mut  Commands<'_, '_>, i: f32, spacing: f32, node: &petgraph::graph::Node<Node>) {
+fn draw_node( commands: &mut  Commands<'_, '_>, asset_server: &Res<AssetServer>, i: f32, spacing: f32, node: &petgraph::graph::Node<Node>) {
     let entity: Entity = commands.spawn_empty().id();
     let color = Color::hsl(360. * i as f32 / 3 as f32, 0.95, 0.7);
     let y = if i % 2.0 == 0.0 { 1.0 } else { 0.0 };
-    commands.entity(entity)
-    .insert((Sprite {
-        color: color,
-        custom_size: Some(Vec2::new(SIZE, SIZE)),
-        ..default()
-        }, Transform::from_xyz((spacing + SIZE )* i, (spacing + SIZE )* y, 0.0),
-        node.weight.clone()
-    ))
-    .with_child((
+    let mut entity_commands = commands.entity(entity);
+    
+    let entity_commands=  match &node.weight.image_src {
+        Some(image_src) => {
+            entity_commands.insert((Sprite {
+                color: color,
+                custom_size: Some(Vec2::new(SIZE, SIZE)),
+                image: asset_server.load(image_src),
+                ..default()
+                }, 
+                Transform::from_xyz((spacing + SIZE )* i, (spacing + SIZE )* y, 0.0),
+                node.weight.clone()
+            ))
+        },
+        None => {
+            entity_commands.insert((Sprite {
+                color: color,
+                custom_size: Some(Vec2::new(SIZE, SIZE)),
+                ..default()
+                }, Transform::from_xyz((spacing + SIZE )* i, (spacing + SIZE )* y, 0.0),
+                node.weight.clone()
+            ))
+        },
+    };
+    
+    entity_commands.with_child((
         Text2d::new(node.weight.label.to_string()),
         Transform::from_xyz(0.0, -70.0 , 0.0)
     ));
