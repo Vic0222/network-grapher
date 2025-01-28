@@ -1,0 +1,1 @@
+{"nodes":[{"id":1,"label":"Father","image_src":"100.png","graph_x":-200.0,"graph_y":0.0},{"id":2,"label":"Mother","image_src":"100.png","graph_x":200.0,"graph_y":0.0},{"id":3,"label":"Child","image_src":"100.png","graph_x":0.0,"graph_y":-200.0}],"edges":[{"src_id":1,"target_id":3,"weight":1},{"src_id":2,"target_id":3,"weight":1}]}

@@ -1,7 +1,8 @@
 mod components;
 mod models;
+mod io;
 
-use bevy::{color::palettes::css::*, input::mouse::{MouseButtonInput, MouseMotion}, prelude::*};
+use bevy::{animation::graph, color::palettes::css::*, input::mouse::{MouseButtonInput, MouseMotion}, prelude::*};
 use bevy_prototype_lyon::prelude::*;
 use petgraph:: Graph;
 
@@ -32,19 +33,21 @@ const CAM_LERP_FACTOR: f32 = 1.;
 #[derive(Resource, Deref)]
 pub struct GraphResource(pub Graph<Node, i32>);
 fn setup_graph(mut commands: Commands) {
-    let node1 = Node { id: 1, label: "Father".to_string(), image_src: Some( "100.png".to_string()), graph_x: -200.0, graph_y: 0.0 };
-    let node2 = Node { id: 2, label: "Mother".to_string(), image_src: Some( "100.png".to_string()), graph_x: 200.0, graph_y: 0.0 };
-    let node3 = Node { id: 3, label: "Child".to_string(), image_src: Some( "100.png".to_string()), graph_x: 0.0, graph_y: -200.0 };
-    let mut graph = Graph::<Node, i32>::new();
+    // let node1 = Node { id: 1, label: "Father".to_string(), image_src: Some( "100.png".to_string()), graph_x: -200.0, graph_y: 0.0 };
+    // let node2 = Node { id: 2, label: "Mother".to_string(), image_src: Some( "100.png".to_string()), graph_x: 200.0, graph_y: 0.0 };
+    // let node3 = Node { id: 3, label: "Child".to_string(), image_src: Some( "100.png".to_string()), graph_x: 0.0, graph_y: -200.0 };
+    // let mut graph = Graph::<Node, i32>::new();
     
-    let a = graph.add_node(node1);
-    let b = graph.add_node(node2);
-    let c = graph.add_node(node3);
+    // let a = graph.add_node(node1);
+    // let b = graph.add_node(node2);
+    // let c = graph.add_node(node3);
     
-    //g.add_edge(a, b, 0);
-    graph.add_edge(a, c, 1);
-    graph.add_edge(b, c, 1);
+    // //g.add_edge(a, b, 0);
+    // graph.add_edge(a, c, 1);
+    // graph.add_edge(b, c, 1);
     
+    //io::save_to_file(&graph).unwrap();
+    let graph = io::load_from_file().expect("can't load file");
     commands.insert_resource(GraphResource(graph));
 }
 

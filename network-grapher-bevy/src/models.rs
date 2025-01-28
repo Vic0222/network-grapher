@@ -1,7 +1,8 @@
 use bevy::prelude::Component;
+use serde::{Deserialize, Serialize};
 
 
-#[derive(Component, Default, Clone, Debug)]
+#[derive(Component, Default, Clone, Debug, Serialize, Deserialize)]
 pub struct Node {
     pub id: i32,
     pub label: String,
